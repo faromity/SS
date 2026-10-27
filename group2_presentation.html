@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Group 2 – Choose Your Way</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--p:#46178f;--pd:#2d0a63;--red:#e21b3c;--blue:#1368ce;--yel:#d89e00;--grn:#26890c;--w:#fff}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;overflow:hidden;background:var(--pd);font-family:'Montserrat','Trebuchet MS',Arial,sans-serif;color:var(--w);cursor:pointer}
+body{background:radial-gradient(circle at 50% 40%,#5a22b0,var(--pd) 75%)}
+#bgshapes{position:fixed;inset:0;pointer-events:none;overflow:hidden}
+.sh{position:absolute;bottom:-12vh;opacity:.13;animation:rise linear infinite}
+@keyframes rise{to{transform:translateY(-125vh) rotate(360deg)}}
+.plane{position:fixed;font-size:7vh;top:12vh;left:-10vw;z-index:30;pointer-events:none;animation:fly 2.2s ease-in-out forwards}
+@keyframes fly{to{left:110vw;top:2vh;transform:rotate(-12deg)}}
+#stage{position:relative;height:100%;display:flex;flex-direction:column;padding:2.5vh 3vw;z-index:2}
+#top{display:flex;justify-content:space-between;align-items:center;height:9vh}
+#badge{background:#fff;color:var(--p);font-weight:900;font-size:2.4vh;padding:1vh 2vw;border-radius:99px;transition:opacity .5s}
+#tag{font-weight:800;font-size:2.8vh;opacity:0;transition:opacity .6s}
+#tm{--d:360deg;width:9vh;height:9vh;border-radius:50%;background:conic-gradient(#fff var(--d),rgba(255,255,255,.18) 0);display:grid;place-items:center;transform:scale(0);transition:transform .5s cubic-bezier(.3,1.6,.5,1)}
+#tm.show{transform:scale(1)}
+#tm span{width:80%;height:80%;border-radius:50%;background:var(--p);display:grid;place-items:center;font-weight:900;font-size:4.5vh}
+#tm.low span{background:var(--red);animation:pulse .5s infinite alternate}
+@keyframes pulse{to{transform:scale(1.12)}}
+#main{flex:1;display:flex;align-items:center;justify-content:center;gap:3vw;min-height:0}
+#vwrap{position:relative;aspect-ratio:4/3;border-radius:2vh;overflow:hidden;border:.7vh solid #fff;box-shadow:0 1.5vh 0 rgba(0,0,0,.35);background:#000;transition:height .9s cubic-bezier(.6,0,.2,1),opacity .6s,transform .7s cubic-bezier(.3,1.5,.5,1),margin .9s;flex:none}
+#vwrap.hid{height:0;opacity:0;transform:scale(.3);border-width:0;margin:0 -1.5vw}
+#vwrap.mini{height:34vh}
+#vwrap.big{height:58vh}
+#vwrap.swap{opacity:0}
+#v{width:100%;height:100%;display:block;object-fit:cover}
+#vhs{position:absolute;inset:0;opacity:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(0,0,0,.35) 0 2px,transparent 2px 5px);display:grid;place-items:center;font-size:5vh;font-weight:900;text-shadow:0 0 12px #f0f}
+.rew #vhs{opacity:1;animation:jit .12s infinite}
+.rew #v{filter:sepia(.7) hue-rotate(-40deg) saturate(1.8) contrast(1.2)}
+.rew #vhs::after{content:"◀◀ REWIND";animation:blink .5s infinite}
+@keyframes jit{0%{transform:translate(0,0)}33%{transform:translate(-4px,2px)}66%{transform:translate(5px,-3px)}}
+@keyframes blink{50%{opacity:.2}}
+#panel{flex:1;max-width:48vw;position:relative}
+#txt{font-size:3.4vh;line-height:1.35;font-weight:600;transition:opacity .35s,transform .35s}
+#txt.out{opacity:0;transform:translateY(2.5vh)}
+#txt h1.title{font-size:15vh;font-weight:900;line-height:.95;margin-bottom:2vh;text-shadow:0 .8vh 0 rgba(0,0,0,.35);animation:pop .9s cubic-bezier(.3,1.7,.5,1)}
+#txt h2{font-size:4.6vh;font-weight:900;margin-top:1.5vh}
+#txt b{color:#ffd23f}
+#txt .q{display:block;margin-top:1.5vh;font-size:4.2vh;font-weight:900;animation:pop .7s cubic-bezier(.3,1.7,.5,1)}
+#txt.result{background:#fff;color:#2a1055;padding:3vh 2.5vw;border-radius:2vh;box-shadow:0 1vh 0 rgba(0,0,0,.3)}
+#txt.result b{color:var(--red)}
+.stamp{display:inline-block;border:.6vh solid var(--red);color:var(--red);padding:.5vh 1.5vw;font-weight:900;font-size:3vh;border-radius:1vh;transform:rotate(-7deg);margin-bottom:1.5vh;animation:stamp .5s cubic-bezier(.2,1.6,.4,1) .2s both}
+@keyframes stamp{from{transform:rotate(-7deg) scale(3);opacity:0}}
+@keyframes pop{from{transform:scale(.6);opacity:0}}
+.btn{margin-top:2.5vh;background:#fff;color:var(--p);border:0;font:inherit;font-weight:900;font-size:3vh;padding:1.5vh 2.5vw;border-radius:1vh;box-shadow:0 .7vh 0 #bbb;cursor:pointer;animation:pop .6s cubic-bezier(.3,1.7,.5,1)}
+.btn:active{transform:translateY(.5vh);box-shadow:0 .2vh 0 #bbb}
+.hint{font-size:2.2vh;opacity:.8;margin-top:2vh;animation:blink 1.6s infinite}
+#hint{height:6vh;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:2.8vh;opacity:0;transition:opacity .5s}
+#hint.show{opacity:1}
+#opts{display:flex;gap:1.5vw;height:0;overflow:hidden;transition:height .6s cubic-bezier(.3,1.3,.5,1)}
+#opts.show{height:22vh}
+.o{flex:1;border:0;border-radius:1.2vh;color:#fff;font:inherit;font-weight:800;font-size:2.7vh;line-height:1.25;display:flex;align-items:center;gap:1.5vw;padding:0 2vw;text-align:left;box-shadow:0 .9vh 0 rgba(0,0,0,.35);cursor:pointer;position:relative;transition:transform .8s cubic-bezier(.6,-.3,.6,1),opacity .6s,filter .4s}
+#oa{background:var(--red);transform:translateX(-120vw)}
+#ob{background:var(--blue);transform:translateX(120vw)}
+#opts.show #oa,#opts.show #ob{transform:none}
+.o i{font-style:normal;font-size:8vh;flex:none;width:9vh;text-align:center}
+.o.lock{filter:saturate(.4) brightness(.75);cursor:default}
+#opts.show #oa:not(.lock):hover,#opts.show #ob:not(.lock):hover{transform:scale(1.03)}
+.show .o.go{animation:glow .8s infinite alternate}
+@keyframes glow{to{box-shadow:0 0 4vh #fff,0 .9vh 0 rgba(0,0,0,.35)}}
+.show .o.done{filter:grayscale(.8) brightness(.6)}
+#opts.leave #oa{transform:translateX(-120vw) rotate(-8deg);opacity:0}
+#opts.leave #ob{transform:translateX(120vw) rotate(8deg);opacity:0}
+.cf{position:fixed;top:-5vh;font-size:4vh;z-index:40;pointer-events:none;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+.rew #stage{animation:flick .25s infinite}
+@keyframes flick{50%{filter:hue-rotate(40deg) brightness(1.15)}}
+@media (prefers-reduced-motion:reduce){.sh{animation:none}}
+</style>
+</head>
+<body>
+<div id="bgshapes"></div>
+<div id="stage">
+  <div id="top"><div id="badge">GROUP 2</div><div id="tag"></div><div id="tm"><span id="tmn">15</span></div></div>
+  <div id="main">
+    <div id="vwrap" class="hid"><video id="v" playsinline preload="auto"></video><div id="vhs"></div></div>
+    <div id="panel"><div id="txt"></div></div>
+  </div>
+  <div id="hint">👈 LEFT HAND UP = A &nbsp;&nbsp;|&nbsp;&nbsp; RIGHT HAND UP = B 👉</div>
+  <div id="opts"><button class="o" id="oa"><i>▲</i><span></span></button><button class="o" id="ob"><i>◆</i><span></span></button></div>
+</div>
+
+<script>
+/* ============ SETTINGS (edit these) ============ */
+const COUNTDOWN = 15;        // seconds the class gets to vote
+const Q1_PAUSE  = 4.0;       // scene1.mp4: where the video pauses on the question (A continues from here)
+/* ================================================ */
+
+const $=s=>document.querySelector(s), sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const mk=src=>{const a=new Audio(src);a.preload='auto';return a};
+const bg=mk('Background.mp3');bg.loop=true;bg.volume=0;
+const cdSnd=mk('10secondcountdown.mp3'),ring=mk('ring.mp3'),rwSnd=mk('rewindsfx.mp3'),laugh=mk('laughing.mp3');
+const beep=()=>{new Audio('ButtonPress.mp3').play().catch(()=>{})};
+const play=a=>{a.currentTime=0;a.play().catch(()=>{})};
+function fade(a,to,ms=1500){
+  if(to>0&&a.paused)a.play().catch(()=>{});
+  const from=a.volume,t0=performance.now();
+  return new Promise(r=>{(function f(n){const k=Math.min(1,(n-t0)/ms);a.volume=Math.max(0,Math.min(1,from+(to-from)*k));
+    if(k<1)requestAnimationFrame(f);else{if(to===0)a.pause();r()}})(t0)});
+}
+
+/* ---------- background shapes + effects ---------- */
+(function(){const c=['▲','◆','●','■'];for(let i=0;i<16;i++){const d=document.createElement('div');d.className='sh';d.textContent=c[i%4];
+  d.style.cssText=`left:${Math.random()*95}vw;font-size:${5+Math.random()*9}vh;animation-duration:${14+Math.random()*16}s;animation-delay:-${Math.random()*20}s`;$('#bgshapes').appendChild(d)}})();
+function plane(){const p=document.createElement('div');p.className='plane';p.textContent='✈️';document.body.appendChild(p);setTimeout(()=>p.remove(),2400)}
+function confetti(){const c=['▲','◆','●','■','🌏','👨‍👩‍👧','🎭'];const col=['#e21b3c','#1368ce','#d89e00','#26890c'];
+  for(let i=0;i<60;i++){const d=document.createElement('div');d.className='cf';d.textContent=c[i%c.length];
+  d.style.cssText=`left:${Math.random()*100}vw;color:${col[i%4]};animation-duration:${3+Math.random()*3}s;animation-delay:${Math.random()*1.5}s`;document.body.appendChild(d);setTimeout(()=>d.remove(),7000)}}
+
+/* ---------- input: next = click / → / space / enter ---------- */
+let res=null,pick=null;
+const press=()=>new Promise(r=>res=r);
+function fire(){if(res){const r=res;res=null;beep();r()}}
+addEventListener('keydown',e=>{
+  if(['ArrowRight','ArrowDown',' ','Enter','PageDown'].includes(e.key)){e.preventDefault();fire()}
+  else if(e.key==='a'||e.key==='A'||e.key==='1')choose('A');
+  else if(e.key==='b'||e.key==='B'||e.key==='2')choose('B');
+  else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+});
+addEventListener('click',e=>{if(!e.target.closest('button'))fire()});
+function choose(l){if(pick)pick(l)}
+$('#oa').onclick=()=>choose('A');$('#ob').onclick=()=>choose('B');
+
+/* ---------- video helpers ---------- */
+const v=$('#v'),vw=$('#vwrap'),stage=$('#stage');
+const show=m=>vw.className=m;
+function warn(f){const w=document.createElement('div');w.textContent='⚠ Could not load '+f+' - check the file name and folder';
+  w.style.cssText='position:fixed;bottom:1vh;left:50%;transform:translateX(-50%);background:#e21b3c;padding:1vh 2vw;border-radius:1vh;z-index:99;font-weight:800;font-size:2vh';
+  document.body.appendChild(w);setTimeout(()=>w.remove(),6000)}
+async function load(src,t=0,loop=false){
+  v.loop=loop;v.pause();
+  if(v.getAttribute('src')!==src){
+    await new Promise(r=>{let d=false;
+      const fin=ok=>{if(d)return;d=true;v.onloadeddata=v.onerror=null;if(!ok)warn(src);r()};
+      v.onloadeddata=()=>fin(true);v.onerror=()=>fin(false);
+      setTimeout(()=>fin(v.readyState>=2),6000);
+      v.setAttribute('src',src);v.load()});
+  }
+  if(v.readyState>=1&&Math.abs(v.currentTime-t)>.01){
+    await new Promise(r=>{const to=setTimeout(r,1500);v.onseeked=()=>{clearTimeout(to);v.onseeked=null;r()};v.currentTime=t})}
+}
+function playTo(t,cues=[]){return new Promise(r=>{
+  v.loop=false;v.play().catch(()=>{});
+  (function tick(){
+    cues.forEach(c=>{if(!c.d&&v.currentTime>=c.t){c.d=true;c.fn()}});
+    if(v.error||v.readyState===0)return r();
+    if(t!=='end'&&v.currentTime>=t){v.pause();v.currentTime=t;return r()}
+    if(v.ended)return r();
+    requestAnimationFrame(tick)})()})}
+async function say(html,cls=''){
+  const t=$('#txt');t.classList.add('out');await sleep(350);
+  t.innerHTML=html;t.className='out '+cls;void t.offsetWidth;t.classList.remove('out');
+}
+const setTag=h=>{const t=$('#tag');t.style.opacity=0;setTimeout(()=>{t.innerHTML=h;t.style.opacity=1},400)};
+
+/* play one option clip: stops are pause points; 'auto' = first segment starts by itself */
+async function playClip(c){
+  if(c.src){vw.classList.add('swap');await sleep(350);try{await load(c.src,c.from||0)}finally{vw.classList.remove('swap')}}
+  const cues=(c.cues||[]).map(x=>({...x,d:false}));
+  for(let i=0;i<c.stops.length;i++){
+    if(!(i===0&&c.auto)){await press()}
+    await playTo(c.stops[i],cues);
+  }
+}
+async function rewind(to){
+  v.pause();fade(bg,0,600);play(rwSnd);stage.classList.add('rew');
+  const spd=Math.max(3,(v.currentTime-to)/1.8);let last=performance.now();
+  await new Promise(r=>{(function f(n){const dt=(n-last)/1000;last=n;v.currentTime=Math.max(to,v.currentTime-dt*spd);
+    if(v.currentTime<=to+.02)r();else requestAnimationFrame(f)})(last)});
+  await sleep(500);stage.classList.remove('rew');
+}
+
+/* ---------- the vote ---------- */
+async function countdown(){
+  const tm=$('#tm'),n=$('#tmn');tm.classList.add('show');tm.classList.remove('low');$('#hint').classList.add('show');
+  $('#hint').innerHTML='👈 LEFT HAND UP = A &nbsp;&nbsp;|&nbsp;&nbsp; RIGHT HAND UP = B 👉';
+  const t0=performance.now();let started=false;
+  await new Promise(r=>{const iv=setInterval(()=>{
+    const rem=Math.max(0,COUNTDOWN-(performance.now()-t0)/1000);
+    n.textContent=Math.ceil(rem);tm.style.setProperty('--d',(rem/COUNTDOWN*360)+'deg');
+    if(rem<=5)tm.classList.add('low');
+    if(!started&&rem<=10){started=true;play(cdSnd)}
+    if(rem<=0){clearInterval(iv);r()}},100)});
+  $('#hint').innerHTML='⏱️ TIME\'S UP! Count the hands, then click the winner';
+}
+async function ask(c){
+  $('#oa span').textContent=c.A.label;$('#ob span').textContent=c.B.label;
+  const oa=$('#oa'),ob=$('#ob'),opts=$('#opts');
+  [oa,ob].forEach(o=>o.className='o lock');opts.className='show';
+  fade(bg,0,500);await countdown();
+  [oa,ob].forEach(o=>o.className='o go');
+  const first=await new Promise(r=>pick=l=>{pick=null;r(l)});beep();
+  $('#tm').classList.remove('show');$('#hint').classList.remove('show');
+  opts.classList.add('leave');fade(bg,.4,3500);
+  await sleep(900);opts.className='';
+  const second=first==='A'?'B':'A';
+  await playClip(c[first].clip);
+  /* rewind to the options */
+  await say(`<h2>That's one path…</h2><button class="btn" id="rw">⏪ REWIND</button>`);
+  $('#rw').onclick=fire;await press();
+  await rewind(c[first].clip.rewindTo??0);
+  vw.classList.add('swap');await sleep(300);
+  await load(c.base.src,c.base.t,c.base.loop);if(c.base.loop)v.play();vw.classList.remove('swap');
+  fade(bg,.4,2000);
+  await say(`<span class="q">What if he'd gone the other way? 👀</span><div class="hint">Choose ${second} to see it</div>`);
+  oa.className=first==='A'?'o lock done':'o go';ob.className=first==='B'?'o lock done':'o go';opts.className='show';
+  await new Promise(r=>pick=l=>{if(l===second){pick=null;r()}});beep();
+  opts.classList.add('leave');await sleep(900);opts.className='';
+  await playClip(c[second].clip);
+  await say(`<h2>Now let's see what really happened…</h2><div class="hint">next ▶</div>`);await press();
+  plane();
+  await say(`<div class="stamp">RESULT OF CHOICE ${first}</div><br>${c.res[first]}<div class="hint">next ▶</div>`,'result');
+  await press();
+}
+
+/* ============ THE SHOW ============ */
+async function main(){
+  await say(`<h1 class="title">GROUP 2</h1><p>Every choice tells a story, shaped by our <b>family</b>, <b>culture</b> and <b>society</b>. But what happens when these influences challenge our values?</p><div class="hint">click or press → to start</div>`);
+  await press();
+  bg.volume=0;fade(bg,.5,3000);load('scene1.mp4',0);
+
+  /* INTRO */
+  show('mini');
+  await say(`<h2>Today, step into our game.</h2>Make your choices and discover how <b>society shapes who we become</b>.<div class="hint">next ▶</div>`);
+  await press();
+  await say(`<h2>Choose your way,<br>let your values stay.</h2>Your choices shape tomorrow, starting today.<span class="q">Let the game begin! 🎮</span>`);
+  await press();
+  fade(bg,0,2500);plane();
+
+  /* SCENARIO 1 – FAMILY */
+  setTag('👨‍👩‍👧 FAMILY');
+  show('big');
+  await say(`<h2>Scenario 1</h2><b>Melritch</b> moved to Japan 🇯🇵 to be <b>Venti's house husband</b>. He cooks, cleans and keeps everything running smoothly.<div class="hint">next ▶</div>`);
+  await playTo(3.0);await press();
+  const p1=playTo(Q1_PAUSE);
+  await say(`His <b>Filipino relatives</b> 🇵🇭 judge him for not having a "real" job.<span class="q">What should he do?</span><div class="hint">next ▶ starts the vote</div>`);
+  await p1;await press();
+  await ask({
+    base:{src:'scene1.mp4',t:Q1_PAUSE,loop:false},
+    A:{label:'Explain that caring for the home is also important work, even if it\'s different.',
+       clip:{src:'scene1a.mp4',auto:true,stops:[5.0,8.0,'end'],cues:[{t:4.1,fn:()=>play(ring)}],rewindTo:0}},
+    B:{label:'Say they\'re just jealous and block everyone who disagrees.',
+       clip:{src:'scene1b.mp4',stops:[2.6,3.0,'end'],rewindTo:0}},
+    res:{A:`Melritch calmly explains, but his family <b>insists he return to the Philippines</b> and take over the family business anyway.`,
+         B:`Melritch blocks everyone… but the shocked, angry family <b>flies to Japan</b> to lecture him in person. His peaceful home becomes a <b>surprise family meeting</b>.`}
+  });
+
+  /* SCENARIO 2 – CULTURE */
+  setTag('🎭 CULTURE');
+  vw.classList.add('swap');await sleep(350);await load('scene2.mp4',0,true);v.play();vw.classList.remove('swap');
+  await say(`<h2>Scenario 2</h2>The family still <b>forces Melritch back</b> to the Philippines to run the multi-million business. Weeks later his parents move from Cebu to Manila, leaving him with his siblings <b>Lian and Glitz</b>.<div class="hint">next ▶</div>`);
+  await press();
+  await say(`🎃 It's Halloween! The kids ask what costumes to wear.<span class="q">What should Melritch do?</span><div class="hint">next ▶ starts the vote</div>`);
+  await press();
+  await ask({
+    base:{src:'scene2.mp4',t:0,loop:true},
+    A:{label:'Suggest they dress up as a shark or a white lady to scare the other kids.',
+       clip:{src:'scene2a.mp4',auto:true,stops:[2.0,3.1,4.0,8,10,'end'],cues:[{t:3.1,fn:()=>play(laugh)}],rewindTo:0}},
+    B:{label:'Ask what costumes they want, and call their parents on his iPhone 18 Pro Max (burgundy, fully paid) to plan a shopping trip.',
+       clip:{src:'scene2b.mp4',auto:true,stops:[5,'end'],rewindTo:0}},
+    res:{A:`The other kids <b>laugh</b> at Lian and Glitz's costumes. The siblings are embarrassed and Melritch regrets his advice. They exchange a suspicious glance, as if talking by telepathy… and <b>throw Melritch back to Japan</b>. ✈️`,
+         B:`The parents agree! Melritch takes Lian and Glitz on a <b>shopping spree</b>, and they return dressed like they're at the <b>Met Gala</b>, not trick-or-treating. ✨`}
+  });
+
+  /* CONCLUSION – SOCIETY */
+  setTag('🌏 SOCIETY');plane();
+  vw.classList.add('swap');await sleep(350);await load('conclusion.mp4',0,true);v.play();vw.classList.remove('swap');
+  fade(bg,.5,2500);
+  await say(`<h2>Society may change,<br>and traditions may rearrange,</h2><span class="q">but with values held tight,<br>we can make the future bright! 🌟</span><div class="hint">next ▶</div>`);
+  await press();
+  confetti();
+  await say(`<h1 class="title" style="font-size:11vh">Thank you!</h1><h2>Group 2</h2>`);
+}
+main();
+</script>
+</body>
+</html>
